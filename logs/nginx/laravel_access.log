@@ -1,0 +1,5 @@
+172.31.0.1 - - [21/Jun/2021:21:25:02 +0000] "GET / HTTP/1.1" 500 578694 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15"
+172.31.0.1 - - [21/Jun/2021:21:30:24 +0000] "GET / HTTP/1.1" 500 580700 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15"
+172.31.0.1 - - [21/Jun/2021:21:30:25 +0000] "GET /favicon.ico HTTP/1.1" 500 580673 "http://localhost/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15"
+172.31.0.1 - - [21/Jun/2021:21:32:17 +0000] "GET / HTTP/1.1" 500 580654 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15"
+172.31.0.1 - - [21/Jun/2021:21:35:29 +0000] "GET / HTTP/1.1" 500 580717 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15"

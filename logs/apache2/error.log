@@ -1,0 +1,6 @@
+[Mon Jun 21 20:43:20.878631 2021] [mpm_event:notice] [pid 24:tid 140438868777920] AH00489: Apache/2.4.29 (Ubuntu) OpenSSL/1.1.1 configured -- resuming normal operations
+[Mon Jun 21 20:43:20.882832 2021] [core:notice] [pid 24:tid 140438868777920] AH00094: Command line: '/usr/sbin/apache2 -D FOREGROUND'
+[Mon Jun 21 21:01:27.243736 2021] [mpm_event:notice] [pid 22:tid 140137091984320] AH00489: Apache/2.4.29 (Ubuntu) OpenSSL/1.1.1 configured -- resuming normal operations
+[Mon Jun 21 21:01:27.247342 2021] [core:notice] [pid 22:tid 140137091984320] AH00094: Command line: '/usr/sbin/apache2 -D FOREGROUND'
+[Mon Jun 21 21:22:13.250536 2021] [mpm_event:notice] [pid 24:tid 140359008271296] AH00489: Apache/2.4.29 (Ubuntu) OpenSSL/1.1.1 configured -- resuming normal operations
+[Mon Jun 21 21:22:13.253551 2021] [core:notice] [pid 24:tid 140359008271296] AH00094: Command line: '/usr/sbin/apache2 -D FOREGROUND'
