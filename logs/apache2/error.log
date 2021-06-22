@@ -844,3 +844,5 @@
 [Tue Jun 22 10:45:40.776634 2021] [core:error] [pid 26:tid 139907393636096] [client 192.168.208.1:59668] AH00037: Symbolic link not allowed or link target not accessible: /var/www/public/storage, referer: http://localhost/tobacco
 [Tue Jun 22 10:45:40.778801 2021] [core:error] [pid 25:tid 139907192309504] [client 192.168.208.1:59788] AH00037: Symbolic link not allowed or link target not accessible: /var/www/public/storage, referer: http://localhost/tobacco
 [Tue Jun 22 10:45:40.779994 2021] [core:error] [pid 25:tid 139907183916800] [client 192.168.208.1:59784] AH00037: Symbolic link not allowed or link target not accessible: /var/www/public/storage, referer: http://localhost/tobacco
+[Tue Jun 22 10:57:37.829411 2021] [mpm_event:notice] [pid 24:tid 140587576003520] AH00489: Apache/2.4.29 (Ubuntu) OpenSSL/1.1.1 configured -- resuming normal operations
+[Tue Jun 22 10:57:37.830611 2021] [core:notice] [pid 24:tid 140587576003520] AH00094: Command line: '/usr/sbin/apache2 -D FOREGROUND'

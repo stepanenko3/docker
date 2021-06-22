@@ -1,8 +1,6 @@
 ARG MYSQL_VERSION
 FROM mysql:${MYSQL_VERSION}
 
-LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
-
 #####################################
 # Set Timezone
 #####################################

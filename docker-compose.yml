@@ -37,8 +37,8 @@ services:
           - SHELL_OH_MY_ZSH_ALIASES=${SHELL_OH_MY_ZSH_ALIASES}
           - UBUNTU_SOURCE=${UBUNTU_SOURCE}
           - BASE_IMAGE_TAG_PREFIX=${WORKSPACE_BASE_IMAGE_TAG_PREFIX}
-          - LARADOCK_PHP_VERSION=${PHP_VERSION}
-          - LARADOCK_PHALCON_VERSION=${PHALCON_VERSION}
+          - DOCKCORE_PHP_VERSION=${PHP_VERSION}
+          - DOCKCORE_PHALCON_VERSION=${PHALCON_VERSION}
           - INSTALL_SUBVERSION=${WORKSPACE_INSTALL_SUBVERSION}
           - INSTALL_BZ2=${WORKSPACE_INSTALL_BZ2}
           - INSTALL_GMP=${WORKSPACE_INSTALL_GMP}
@@ -139,8 +139,8 @@ services:
         args:
           - CHANGE_SOURCE=${CHANGE_SOURCE}
           - BASE_IMAGE_TAG_PREFIX=${PHP_FPM_BASE_IMAGE_TAG_PREFIX}
-          - LARADOCK_PHP_VERSION=${PHP_VERSION}
-          - LARADOCK_PHALCON_VERSION=${PHALCON_VERSION}
+          - DOCKCORE_PHP_VERSION=${PHP_VERSION}
+          - DOCKCORE_PHALCON_VERSION=${PHALCON_VERSION}
           - INSTALL_BZ2=${PHP_FPM_INSTALL_BZ2}
           - INSTALL_ENCHANT=${PHP_FPM_INSTALL_ENCHANT}
           - INSTALL_GMP=${PHP_FPM_INSTALL_GMP}
@@ -186,7 +186,6 @@ services:
           - INSTALL_PING=${PHP_FPM_INSTALL_PING}
           - INSTALL_SSHPASS=${PHP_FPM_INSTALL_SSHPASS}
           - INSTALL_MAILPARSE=${PHP_FPM_INSTALL_MAILPARSE}
-          - INSTALL_PCNTL=${PHP_FPM_INSTALL_PCNTL}
           - ADDITIONAL_LOCALES=${PHP_FPM_ADDITIONAL_LOCALES}
           - INSTALL_FFMPEG=${PHP_FPM_FFMPEG}
           - INSTALL_AUDIOWAVEFORM=${PHP_FPM_AUDIOWAVEFORM}
@@ -231,7 +230,7 @@ services:
         context: ./php-worker
         args:
           - CHANGE_SOURCE=${CHANGE_SOURCE}
-          - LARADOCK_PHP_VERSION=${PHP_VERSION}
+          - DOCKCORE_PHP_VERSION=${PHP_VERSION}
           - PHALCON_VERSION=${PHALCON_VERSION}
           - INSTALL_BZ2=${PHP_WORKER_INSTALL_BZ2}
           - INSTALL_GD=${PHP_WORKER_INSTALL_GD}
@@ -262,42 +261,6 @@ services:
       volumes:
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
         - ./php-worker/supervisord.d:/etc/supervisord.d
-      depends_on:
-        - workspace
-      extra_hosts:
-        - "dockerhost:${DOCKER_HOST_IP}"
-      networks:
-        - backend
-
-### Laravel Horizon ############################################
-    laravel-horizon:
-      build:
-        context: ./laravel-horizon
-        args:
-          - CHANGE_SOURCE=${CHANGE_SOURCE}
-          - LARADOCK_PHP_VERSION=${PHP_VERSION}
-          - INSTALL_BZ2=${LARAVEL_HORIZON_INSTALL_BZ2}
-          - INSTALL_GD=${LARAVEL_HORIZON_INSTALL_GD}
-          - INSTALL_GMP=${LARAVEL_HORIZON_INSTALL_GMP}
-          - INSTALL_GNUPG=${LARAVEL_HORIZON_INSTALL_GNUPG}
-          - INSTALL_LDAP=${LARAVEL_HORIZON_INSTALL_LDAP}
-          - INSTALL_IMAGEMAGICK=${LARAVEL_HORIZON_INSTALL_IMAGEMAGICK}
-          - INSTALL_PGSQL=${PHP_FPM_INSTALL_PGSQL}
-          - INSTALL_ZIP_ARCHIVE=${LARAVEL_HORIZON_INSTALL_ZIP_ARCHIVE}
-          - INSTALL_BCMATH=${PHP_FPM_INSTALL_BCMATH}
-          - INSTALL_MEMCACHED=${PHP_FPM_INSTALL_MEMCACHED}
-          - INSTALL_SOCKETS=${LARAVEL_HORIZON_INSTALL_SOCKETS}
-          - INSTALL_YAML=${LARAVEL_HORIZON_INSTALL_YAML}
-          - INSTALL_PHPREDIS=${LARAVEL_HORIZON_INSTALL_PHPREDIS}
-          - INSTALL_MONGO=${LARAVEL_HORIZON_INSTALL_MONGO}
-          - INSTALL_FFMPEG=${LARAVEL_HORIZON_INSTALL_FFMPEG}
-          - INSTALL_AUDIOWAVEFORM=${LARAVEL_HORIZON_INSTALL_AUDIOWAVEFORM}
-          - PUID=${LARAVEL_HORIZON_PUID}
-          - PGID=${LARAVEL_HORIZON_PGID}
-          - IMAGEMAGICK_VERSION=${LARAVEL_HORIZON_IMAGEMAGICK_VERSION}
-      volumes:
-        - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
-        - ./laravel-horizon/supervisord.d:/etc/supervisord.d
       depends_on:
         - workspace
       extra_hosts:
@@ -504,11 +467,11 @@ services:
       volumes:
         - elasticsearch:/usr/share/elasticsearch/data
       environment:
-        - cluster.name=laradock-cluster
-        - node.name=laradock-node
+        - cluster.name=dockcore-cluster
+        - node.name=dockcore-node
         - bootstrap.memory_lock=true
         - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-        - cluster.initial_master_nodes=laradock-node
+        - cluster.initial_master_nodes=dockcore-node
       ulimits:
         memlock:
           soft: -1

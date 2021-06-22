@@ -4,21 +4,19 @@
 #--------------------------------------------------------------------------
 #
 # To edit the 'workspace' base Image, visit its repository on Github
-#    https://github.com/Laradock/workspace
+#    https://github.com/Dockcore/workspace
 #
 # To change its version, see the available Tags on the Docker Hub:
-#    https://hub.docker.com/r/laradock/workspace/tags/
+#    https://hub.docker.com/r/dockcore/workspace/tags/
 #
 # Note: Base Image name format {image-tag}-{php-version}
 #
 
-ARG LARADOCK_PHP_VERSION
+ARG DOCKCORE_PHP_VERSION
 ARG BASE_IMAGE_TAG_PREFIX=latest
-FROM laradock/workspace:${BASE_IMAGE_TAG_PREFIX}-${LARADOCK_PHP_VERSION}
+FROM dockcore/workspace:${BASE_IMAGE_TAG_PREFIX}-${DOCKCORE_PHP_VERSION}
 
-LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
-
-ARG LARADOCK_PHP_VERSION
+ARG DOCKCORE_PHP_VERSION
 
 # Set Environment Variables
 ENV DEBIAN_FRONTEND noninteractive
@@ -44,7 +42,7 @@ RUN if [ ${CHANGE_SOURCE} = true ]; then \
   rm -rf /tmp/sources.sh
 
 ###########################################################################
-# Laradock non-root user:
+# Dockcore non-root user:
 ###########################################################################
 
 # Add a non-root user to prevent files being created with root permissions on host machine.
@@ -57,9 +55,9 @@ ENV PGID ${PGID}
 RUN set -xe; \
     apt-get update -yqq && \
     pecl channel-update pecl.php.net && \
-    groupadd -g ${PGID} laradock && \
-    useradd -l -u ${PUID} -g laradock -m laradock -G docker_env && \
-    usermod -p "*" laradock -s /bin/bash && \
+    groupadd -g ${PGID} dockcore && \
+    useradd -l -u ${PUID} -g dockcore -m dockcore -G docker_env && \
+    usermod -p "*" dockcore -s /bin/bash && \
     apt-get install -yqq \
       apt-utils \
       #
@@ -68,14 +66,14 @@ RUN set -xe; \
       #--------------------------------------------------------------------------
       #
       # Mandatory Software's such as ("php-cli", "git", "vim", ....) are
-      # installed on the base image 'laradock/workspace' image. If you want
+      # installed on the base image 'dockcore/workspace' image. If you want
       # to add more Software's or remove existing one, you need to edit the
-      # base image (https://github.com/Laradock/workspace).
+      # base image (https://github.com/Dockcore/workspace).
       #
-      # next lines are here because there is no auto build on dockerhub see https://github.com/laradock/laradock/pull/1903#issuecomment-463142846
+      # next lines are here because there is no auto build on dockerhub see https://github.com/dockcore/dockcore/pull/1903#issuecomment-463142846
       libzip-dev zip unzip \
       # Install the zip extension
-      php${LARADOCK_PHP_VERSION}-zip \
+      php${DOCKCORE_PHP_VERSION}-zip \
       # nasm
       nasm && \
       php -m | grep -q 'zip'
@@ -108,17 +106,17 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 USER root
 
 COPY ./aliases.sh /root/aliases.sh
-COPY ./aliases.sh /home/laradock/aliases.sh
+COPY ./aliases.sh /home/dockcore/aliases.sh
 
 RUN sed -i 's/\r//' /root/aliases.sh && \
-    sed -i 's/\r//' /home/laradock/aliases.sh && \
-    chown laradock:laradock /home/laradock/aliases.sh && \
+    sed -i 's/\r//' /home/dockcore/aliases.sh && \
+    chown dockcore:dockcore /home/dockcore/aliases.sh && \
     echo "" >> ~/.bashrc && \
     echo "# Load Custom Aliases" >> ~/.bashrc && \
     echo "source ~/aliases.sh" >> ~/.bashrc && \
 	  echo "" >> ~/.bashrc
 
-USER laradock
+USER dockcore
 
 RUN echo "" >> ~/.bashrc && \
     echo "# Load Custom Aliases" >> ~/.bashrc && \
@@ -132,13 +130,13 @@ RUN echo "" >> ~/.bashrc && \
 USER root
 
 # Add the composer.json
-COPY ./composer.json /home/laradock/.composer/composer.json
+COPY ./composer.json /home/dockcore/.composer/composer.json
 
 # Add the auth.json for magento 2 credentials
-COPY ./auth.json /home/laradock/.composer/auth.json
+COPY ./auth.json /home/dockcore/.composer/auth.json
 
-# Make sure that ~/.composer belongs to laradock
-RUN chown -R laradock:laradock /home/laradock/.composer
+# Make sure that ~/.composer belongs to dockcore
+RUN chown -R dockcore:dockcore /home/dockcore/.composer
 
 # Export composer vendor path
 RUN echo "" >> ~/.bashrc && \
@@ -154,7 +152,7 @@ RUN set -eux; \
           composer self-update ${COMPOSER_VERSION}; \
       fi
 
-USER laradock
+USER dockcore
 
 # Check if global install need to be ran
 ARG COMPOSER_GLOBAL_INSTALL=false
@@ -171,7 +169,7 @@ ENV COMPOSER_AUTH ${COMPOSER_AUTH}
 
 RUN if [ ${COMPOSER_AUTH} = false ]; then \
     # remove the file
-    rm /home/laradock/.composer/auth.json \
+    rm /home/dockcore/.composer/auth.json \
 ;fi
 
 ARG COMPOSER_REPO_PACKAGIST
@@ -190,7 +188,7 @@ RUN echo "" >> ~/.bashrc && \
 ###########################################################################
 
 # add ./vendor/bin to non-root user's bashrc (needed for phpunit)
-USER laradock
+USER dockcore
 
 RUN echo "" >> ~/.bashrc && \
     echo 'export PATH="/var/www/vendor/bin:$PATH"' >> ~/.bashrc
@@ -229,48 +227,48 @@ ARG INSTALL_GNUPG=false
 ARG INSTALL_SSH2=false
 ARG INSTALL_SOAP=false
 ARG INSTALL_XSL=false
-ARG PHP_VERSION=${LARADOCK_PHP_VERSION}
+ARG PHP_VERSION=${DOCKCORE_PHP_VERSION}
 
 RUN set -eux; \
     ###########################################################################
     # BZ2:
     ###########################################################################
     if [ ${INSTALL_BZ2} = true ]; then \
-      apt-get -yqq install php${LARADOCK_PHP_VERSION}-bz2; \
+      apt-get -yqq install php${DOCKCORE_PHP_VERSION}-bz2; \
     fi; \
     ###########################################################################
     # GMP (GNU Multiple Precision):
     ###########################################################################
     if [ ${INSTALL_GMP} = true ]; then \
       # Install the PHP GMP extension
-      apt-get -yqq install php${LARADOCK_PHP_VERSION}-gmp; \
+      apt-get -yqq install php${DOCKCORE_PHP_VERSION}-gmp; \
     fi; \
     ###########################################################################
     # GnuPG:
     ###########################################################################
     if [ ${INSTALL_GNUPG} = true ]; then \
-        apt-get -yqq install php${LARADOCK_PHP_VERSION}-gnupg; \
+        apt-get -yqq install php${DOCKCORE_PHP_VERSION}-gnupg; \
     fi; \
     ###########################################################################
     # SSH2:
     ###########################################################################
     if [ ${INSTALL_SSH2} = true ]; then \
       # Install the PHP SSH2 extension
-      apt-get -yqq install libssh2-1-dev php${LARADOCK_PHP_VERSION}-ssh2; \
+      apt-get -yqq install libssh2-1-dev php${DOCKCORE_PHP_VERSION}-ssh2; \
     fi; \
     ###########################################################################
     # SOAP:
     ###########################################################################
     if [ ${INSTALL_SOAP} = true ]; then \
       # Install the PHP SOAP extension
-      apt-get -yqq install libxml2-dev php${LARADOCK_PHP_VERSION}-soap; \
+      apt-get -yqq install libxml2-dev php${DOCKCORE_PHP_VERSION}-soap; \
     fi; \
     ###########################################################################
     # XSL:
     ###########################################################################
     if [ ${INSTALL_XSL} = true ]; then \
       # Install the PHP XSL extension
-      apt-get -yqq install libxslt-dev php${LARADOCK_PHP_VERSION}-xsl; \
+      apt-get -yqq install libxslt-dev php${DOCKCORE_PHP_VERSION}-xsl; \
     fi
 
 ###########################################################################
@@ -285,7 +283,7 @@ RUN set -eux; \
     # LDAP:
     ###########################################################################
     if [ ${INSTALL_LDAP} = true ]; then \
-        apt-get install -yqq libldap2-dev php${LARADOCK_PHP_VERSION}-ldap; \
+        apt-get install -yqq libldap2-dev php${DOCKCORE_PHP_VERSION}-ldap; \
     fi; \
     ###########################################################################
     # SMB:
@@ -297,7 +295,7 @@ RUN set -eux; \
     # IMAP:
     ###########################################################################
     if [ ${INSTALL_IMAP} = true ]; then \
-        apt-get install -yqq php${LARADOCK_PHP_VERSION}-imap; \
+        apt-get install -yqq php${DOCKCORE_PHP_VERSION}-imap; \
     fi; \
     ###########################################################################
     # Subversion:
@@ -338,26 +336,26 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
       fi \
     fi \
   fi && \
-  echo "zend_extension=xdebug.so" >> /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-xdebug.ini \
+  echo "zend_extension=xdebug.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/20-xdebug.ini \
 ;fi
 
 # ADD for REMOTE debugging
-COPY ./xdebug.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini
+COPY ./xdebug.ini /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/xdebug.ini
 
 RUN if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
-  sed -i "s/xdebug.remote_host=/xdebug.client_host=/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini && \
-  sed -i "s/xdebug.remote_connect_back=0/xdebug.discover_client_host=false/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini && \
-  sed -i "s/xdebug.remote_port=9000/xdebug.client_port=9003/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini && \
-  sed -i "s/xdebug.profiler_enable=0/; xdebug.profiler_enable=0/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini && \
-  sed -i "s/xdebug.profiler_output_dir=/xdebug.output_dir=/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini && \
-  sed -i "s/xdebug.remote_mode=req/; xdebug.remote_mode=req/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini && \
-  sed -i "s/xdebug.remote_autostart=0/xdebug.start_with_request=yes/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini && \
-  sed -i "s/xdebug.remote_enable=0/xdebug.mode=debug/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini \
+  sed -i "s/xdebug.remote_host=/xdebug.client_host=/" /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/xdebug.ini && \
+  sed -i "s/xdebug.remote_connect_back=0/xdebug.discover_client_host=false/" /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/xdebug.ini && \
+  sed -i "s/xdebug.remote_port=9000/xdebug.client_port=9003/" /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/xdebug.ini && \
+  sed -i "s/xdebug.profiler_enable=0/; xdebug.profiler_enable=0/" /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/xdebug.ini && \
+  sed -i "s/xdebug.profiler_output_dir=/xdebug.output_dir=/" /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/xdebug.ini && \
+  sed -i "s/xdebug.remote_mode=req/; xdebug.remote_mode=req/" /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/xdebug.ini && \
+  sed -i "s/xdebug.remote_autostart=0/xdebug.start_with_request=yes/" /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/xdebug.ini && \
+  sed -i "s/xdebug.remote_enable=0/xdebug.mode=debug/" /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/xdebug.ini \
 ;else \
-  sed -i "s/xdebug.remote_autostart=0/xdebug.remote_autostart=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini && \
-  sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini \
+  sed -i "s/xdebug.remote_autostart=0/xdebug.remote_autostart=1/" /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/xdebug.ini && \
+  sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/xdebug.ini \
 ;fi
-RUN sed -i "s/xdebug.cli_color=0/xdebug.cli_color=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini
+RUN sed -i "s/xdebug.cli_color=0/xdebug.cli_color=1/" /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/xdebug.ini
 
 ###########################################################################
 # pcov:
@@ -371,8 +369,8 @@ RUN if [ ${INSTALL_PCOV} = true ]; then \
   if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
     if [ $(php -r "echo PHP_MINOR_VERSION;") != "0" ]; then \
       pecl install pcov && \
-      echo "extension=pcov.so" >> /etc/php/${LARADOCK_PHP_VERSION}/cli/php.ini && \
-      echo "pcov.enabled" >> /etc/php/${LARADOCK_PHP_VERSION}/cli/php.ini \
+      echo "extension=pcov.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/cli/php.ini && \
+      echo "pcov.enabled" >> /etc/php/${DOCKCORE_PHP_VERSION}/cli/php.ini \
     ;fi \
   ;fi \
 ;fi
@@ -388,7 +386,7 @@ ARG INSTALL_PHPDBG=false
 
 RUN if [ ${INSTALL_PHPDBG} = true ]; then \
     # Load the xdebug extension only with phpunit commands
-    apt-get install -y --force-yes php${LARADOCK_PHP_VERSION}-phpdbg \
+    apt-get install -y --force-yes php${DOCKCORE_PHP_VERSION}-phpdbg \
 ;fi
 
 
@@ -409,8 +407,8 @@ RUN if [ ${INSTALL_WORKSPACE_SSH} = true ]; then \
         && rm -f /tmp/id_rsa* \
         && chmod 644 /root/.ssh/authorized_keys /root/.ssh/id_rsa.pub \
     && chmod 400 /root/.ssh/id_rsa \
-    && cp -rf /root/.ssh /home/laradock \
-    && chown -R laradock:laradock /home/laradock/.ssh \
+    && cp -rf /root/.ssh /home/dockcore \
+    && chown -R dockcore:dockcore /home/dockcore/.ssh \
 ;fi
 
 ###########################################################################
@@ -423,12 +421,12 @@ RUN if [ ${INSTALL_MONGO} = true ]; then \
     # Install the mongodb extension
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
       pecl install mongo && \
-      echo "extension=mongo.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/mongo.ini && \
-      ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/mongo.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/30-mongo.ini \
+      echo "extension=mongo.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/mongo.ini && \
+      ln -s /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/mongo.ini /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/30-mongo.ini \
     ;else \
       pecl install mongodb && \
-      echo "extension=mongodb.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/mongodb.ini && \
-      ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/mongodb.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/30-mongodb.ini \
+      echo "extension=mongodb.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/mongodb.ini && \
+      ln -s /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/mongodb.ini /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/30-mongodb.ini \
     ;fi \
 ;fi
 
@@ -439,7 +437,7 @@ RUN if [ ${INSTALL_MONGO} = true ]; then \
 ARG INSTALL_PHPREDIS=false
 
 RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
-    apt-get install -yqq php${LARADOCK_PHP_VERSION}-redis \
+    apt-get install -yqq php${DOCKCORE_PHP_VERSION}-redis \
 ;fi
 
 ###########################################################################
@@ -460,8 +458,8 @@ RUN set -eux; \
       else \
         echo '' | pecl -q install swoole; \
       fi; \
-      echo "extension=swoole.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini; \
-      ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-swoole.ini; \
+      echo "extension=swoole.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/swoole.ini; \
+      ln -s /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/swoole.ini /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/20-swoole.ini; \
       php -m | grep -q 'swoole'; \
     fi
 
@@ -475,8 +473,8 @@ RUN if [ "${INSTALL_TAINT}" = true ]; then \
     # Install Php TAINT Extension
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
       pecl install taint && \
-      echo "extension=taint.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/taint.ini && \
-      ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/taint.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-taint.ini && \
+      echo "extension=taint.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/taint.ini && \
+      ln -s /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/taint.ini /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/20-taint.ini && \
       php -m | grep -q 'taint'; \
     fi \
 ;fi
@@ -500,12 +498,12 @@ ARG INSTALL_INOTIFY=false
 RUN if [ ${INSTALL_INOTIFY} = true ]; then \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
       pecl -q install inotify-0.1.6 && \
-      echo "extension=inotify.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/inotify.ini && \
-      ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/inotify.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-inotify.ini; \
+      echo "extension=inotify.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/inotify.ini && \
+      ln -s /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/inotify.ini /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/20-inotify.ini; \
     else \
       pecl -q install inotify && \
-      echo "extension=inotify.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/inotify.ini && \
-      ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/inotify.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-inotify.ini \
+      echo "extension=inotify.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/inotify.ini && \
+      ln -s /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/inotify.ini /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/20-inotify.ini \
     ;fi \
 ;fi
 
@@ -522,8 +520,8 @@ RUN if [ ${INSTALL_AST} = true ]; then \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") != "5" ]; then \
         # Install AST extension
         printf "\n" | pecl -q install ast-${AST_VERSION} && \
-        echo "extension=ast.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/ast.ini && \
-        phpenmod -v ${LARADOCK_PHP_VERSION} -s cli ast \
+        echo "extension=ast.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/ast.ini && \
+        phpenmod -v ${DOCKCORE_PHP_VERSION} -s cli ast \
     ;fi \
 ;fi
 
@@ -561,9 +559,9 @@ RUN if [ ${INSTALL_IONCUBE} = true ]; then \
       # Install the php ioncube loader
       curl -L -o /tmp/ioncube_loaders_lin_x86-64.tar.gz https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
       && tar zxpf /tmp/ioncube_loaders_lin_x86-64.tar.gz -C /tmp \
-      && mv /tmp/ioncube/ioncube_loader_lin_${LARADOCK_PHP_VERSION}.so $(php -r "echo ini_get('extension_dir');")/ioncube_loader.so \
-      && echo "zend_extension=ioncube_loader.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/ioncube.ini \
-      && ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/ioncube.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/0ioncube.ini \
+      && mv /tmp/ioncube/ioncube_loader_lin_${DOCKCORE_PHP_VERSION}.so $(php -r "echo ini_get('extension_dir');")/ioncube_loader.so \
+      && echo "zend_extension=ioncube_loader.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/ioncube.ini \
+      && ln -s /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/ioncube.ini /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/0ioncube.ini \
       && rm -rf /tmp/ioncube* \
     ;fi \
 ;fi
@@ -609,9 +607,9 @@ RUN set -xe; \
         ;fi \
       ;fi \
     && rm /tmp/aerospike-client-php.tar.gz \
-    && echo 'extension=aerospike.so' >> /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/aerospike.ini \
-    && echo 'aerospike.udf.lua_system_path=/usr/local/aerospike/lua' >> /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/aerospike.ini \
-    && echo 'aerospike.udf.lua_user_path=/usr/local/aerospike/usr-lua' >> /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/aerospike.ini \
+    && echo 'extension=aerospike.so' >> /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/aerospike.ini \
+    && echo 'aerospike.udf.lua_system_path=/usr/local/aerospike/lua' >> /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/aerospike.ini \
+    && echo 'aerospike.udf.lua_user_path=/usr/local/aerospike/usr-lua' >> /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/aerospike.ini \
   ;fi
 
 ###########################################################################
@@ -652,7 +650,7 @@ RUN if [ ${INSTALL_OCI8} = true ]; then \
   else \
     echo 'instantclient,/opt/oracle/instantclient_12_1/' | pecl install oci8-2.2.0; \
   fi \
-  && echo "extension=oci8.so" >> /etc/php/${LARADOCK_PHP_VERSION}/cli/php.ini \
+  && echo "extension=oci8.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/cli/php.ini \
   && php -m | grep -q 'oci8' \
 ;fi
 
@@ -674,7 +672,7 @@ RUN set -xe; \
     else \
       pecl install v8js; \
     fi \
-    && echo "extension=v8js.so" >> /etc/php/${LARADOCK_PHP_VERSION}/cli/php.ini \
+    && echo "extension=v8js.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/cli/php.ini \
     && php -m | grep -q 'v8js' \
   ;fi
 
@@ -682,7 +680,7 @@ RUN set -xe; \
 # Laravel Envoy:
 ###########################################################################
 
-USER laradock
+USER dockcore
 
 ARG INSTALL_LARAVEL_ENVOY=false
 
@@ -695,7 +693,7 @@ RUN if [ ${INSTALL_LARAVEL_ENVOY} = true ]; then \
 # Laravel Installer:
 ###########################################################################
 
-USER laradock
+USER dockcore
 
 ARG INSTALL_LARAVEL_INSTALLER=false
 
@@ -804,8 +802,8 @@ RUN set -eux; \
       ;else \
         pecl install pdo_sqlsrv sqlsrv \
       ;fi && \
-      echo "extension=sqlsrv.so"     > /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-sqlsrv.ini && \
-      echo "extension=pdo_sqlsrv.so" > /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-pdo_sqlsrv.ini && \
+      echo "extension=sqlsrv.so"     > /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/20-sqlsrv.ini && \
+      echo "extension=pdo_sqlsrv.so" > /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/20-pdo_sqlsrv.ini && \
       php -m | grep -q 'sqlsrv' && \
       php -m | grep -q 'pdo_sqlsrv' \
     ;fi \
@@ -826,7 +824,7 @@ RUN if [ ${INSTALL_IMAGE_OPTIMIZERS} = true ]; then \
     ;fi\
 ;fi
 
-USER laradock
+USER dockcore
 
 ###########################################################################
 # Symfony:
@@ -873,8 +871,8 @@ RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
     else \
       pecl install imagick; \
     fi && \
-    echo "extension=imagick.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/imagick.ini && \
-    ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/imagick.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-imagick.ini && \
+    echo "extension=imagick.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/imagick.ini && \
+    ln -s /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/imagick.ini /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/20-imagick.ini && \
     php -m | grep -q 'imagick' \
 ;fi
 
@@ -901,8 +899,8 @@ RUN if [ ${INSTALL_TERRAFORM} = true ]; then \
 ARG INSTALL_MEMCACHED=false
 
 RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
-  apt-get -y install php${LARADOCK_PHP_VERSION}-igbinary \
-  && apt-get -y install php${LARADOCK_PHP_VERSION}-memcached \
+  apt-get -y install php${DOCKCORE_PHP_VERSION}-igbinary \
+  && apt-get -y install php${DOCKCORE_PHP_VERSION}-memcached \
 ;fi
 
 ###########################################################################
@@ -953,8 +951,8 @@ RUN if [ ${INSTALL_DUSK_DEPS} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_PHALCON=false
-ARG LARADOCK_PHALCON_VERSION
-ENV LARADOCK_PHALCON_VERSION ${LARADOCK_PHALCON_VERSION}
+ARG DOCKCORE_PHALCON_VERSION
+ENV DOCKCORE_PHALCON_VERSION ${DOCKCORE_PHALCON_VERSION}
 
 RUN if [ $INSTALL_PHALCON = true ]; then \
     apt-get update && apt-get install -yqq unzip libpcre3-dev gcc make re2c git automake autoconf\
@@ -965,13 +963,13 @@ RUN if [ $INSTALL_PHALCON = true ]; then \
     && make \
     && make test \
     && make install \
-    && curl -L -o /tmp/cphalcon.zip https://github.com/phalcon/cphalcon/archive/v${LARADOCK_PHALCON_VERSION}.zip \
+    && curl -L -o /tmp/cphalcon.zip https://github.com/phalcon/cphalcon/archive/v${DOCKCORE_PHALCON_VERSION}.zip \
     && unzip -d /tmp/ /tmp/cphalcon.zip \
-    && cd /tmp/cphalcon-${LARADOCK_PHALCON_VERSION}/build \
+    && cd /tmp/cphalcon-${DOCKCORE_PHALCON_VERSION}/build \
     && ./install \
-    && echo "extension=psr.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/phalcon.ini \
-    && echo "extension=phalcon.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/phalcon.ini \
-    && ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/phalcon.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/30-phalcon.ini \
+    && echo "extension=psr.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/phalcon.ini \
+    && echo "extension=phalcon.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/phalcon.ini \
+    && ln -s /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/phalcon.ini /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/30-phalcon.ini \
     && rm -rf /tmp/cphalcon* \
 ;fi
 
@@ -1032,8 +1030,8 @@ RUN set -eux; \
     else \
         echo '' | pecl install yaml; \
     fi; \
-    echo "extension=yaml.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/yaml.ini; \
-    ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/yaml.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/35-yaml.ini; \
+    echo "extension=yaml.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/yaml.ini; \
+    ln -s /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/yaml.ini /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/35-yaml.ini; \
   fi; \
   ###########################################################################
   # RDKAFKA:
@@ -1041,8 +1039,8 @@ RUN set -eux; \
   if [ ${INSTALL_RDKAFKA} = true ]; then \
     apt-get install -yqq librdkafka-dev; \
     pecl install rdkafka; \
-    echo "extension=rdkafka.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/rdkafka.ini; \
-    ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/rdkafka.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-rdkafka.ini; \
+    echo "extension=rdkafka.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/rdkafka.ini; \
+    ln -s /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/rdkafka.ini /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/20-rdkafka.ini; \
     php -m | grep -q 'rdkafka'; \
   fi; \
   ###########################################################################
@@ -1143,7 +1141,7 @@ RUN if [ ${INSTALL_GIT_PROMPT} = true ]; then \
 ARG INSTALL_XMLRPC=false
 
 RUN if [ ${INSTALL_XMLRPC} = true ]; then \
-    apt-get install -yqq php${LARADOCK_PHP_VERSION}-xmlrpc \
+    apt-get install -yqq php${DOCKCORE_PHP_VERSION}-xmlrpc \
 ;fi
 
 ###########################################################################
@@ -1183,7 +1181,7 @@ RUN if [ ${INSTALL_PROTOC} = true ]; then \
 # Check PHP version:
 ###########################################################################
 
-RUN set -xe; php -v | head -n 1 | grep -q "PHP ${LARADOCK_PHP_VERSION}."
+RUN set -xe; php -v | head -n 1 | grep -q "PHP ${DOCKCORE_PHP_VERSION}."
 
 ###########################################################################
 # Oh My ZSH!
@@ -1199,10 +1197,10 @@ RUN if [ ${SHELL_OH_MY_ZSH} = true ]; then \
 ARG SHELL_OH_MY_ZSH_AUTOSUGESTIONS=false
 ARG SHELL_OH_MY_ZSH_ALIASES=false
 
-USER laradock
+USER dockcore
 RUN if [ ${SHELL_OH_MY_ZSH} = true ]; then \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --keep-zshrc" && \
-    sed -i -r 's/^plugins=\(.*?\)$/plugins=(laravel5)/' /home/laradock/.zshrc && \
+    sed -i -r 's/^plugins=\(.*?\)$/plugins=(laravel5)/' /home/dockcore/.zshrc && \
     echo '\n\
 bindkey "^[OB" down-line-or-search\n\
 bindkey "^[OC" forward-char\n\
@@ -1214,20 +1212,20 @@ bindkey "^[[3~" delete-char\n\
 bindkey "^[[4~" end-of-line\n\
 bindkey "^[[5~" up-line-or-history\n\
 bindkey "^[[6~" down-line-or-history\n\
-bindkey "^?" backward-delete-char\n' >> /home/laradock/.zshrc && \
+bindkey "^?" backward-delete-char\n' >> /home/dockcore/.zshrc && \
   if [ ${SHELL_OH_MY_ZSH_AUTOSUGESTIONS} = true ]; then \
-    sh -c "git clone https://github.com/zsh-users/zsh-autosuggestions /home/laradock/.oh-my-zsh/custom/plugins/zsh-autosuggestions" && \
-    sed -i 's~plugins=(~plugins=(zsh-autosuggestions ~g' /home/laradock/.zshrc && \
-    sed -i '1iZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20' /home/laradock/.zshrc && \
-    sed -i '1iZSH_AUTOSUGGEST_STRATEGY=(history completion)' /home/laradock/.zshrc && \
-    sed -i '1iZSH_AUTOSUGGEST_USE_ASYNC=1' /home/laradock/.zshrc && \
-    sed -i '1iTERM=xterm-256color' /home/laradock/.zshrc \
+    sh -c "git clone https://github.com/zsh-users/zsh-autosuggestions /home/dockcore/.oh-my-zsh/custom/plugins/zsh-autosuggestions" && \
+    sed -i 's~plugins=(~plugins=(zsh-autosuggestions ~g' /home/dockcore/.zshrc && \
+    sed -i '1iZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20' /home/dockcore/.zshrc && \
+    sed -i '1iZSH_AUTOSUGGEST_STRATEGY=(history completion)' /home/dockcore/.zshrc && \
+    sed -i '1iZSH_AUTOSUGGEST_USE_ASYNC=1' /home/dockcore/.zshrc && \
+    sed -i '1iTERM=xterm-256color' /home/dockcore/.zshrc \
   ;fi && \
   if [ ${SHELL_OH_MY_ZSH_ALIASES} = true ]; then \
-    echo "" >> /home/laradock/.zshrc && \
-    echo "# Load Custom Aliases" >> /home/laradock/.zshrc && \
-    echo "source /home/laradock/aliases.sh" >> /home/laradock/.zshrc && \
-    echo "" >> /home/laradock/.zshrc \
+    echo "" >> /home/dockcore/.zshrc && \
+    echo "# Load Custom Aliases" >> /home/dockcore/.zshrc && \
+    echo "source /home/dockcore/aliases.sh" >> /home/dockcore/.zshrc && \
+    echo "" >> /home/dockcore/.zshrc \
   ;fi \
 ;fi
 
@@ -1240,19 +1238,19 @@ USER root
 USER root
 
 COPY ./aliases.sh /root/aliases.sh
-COPY ./aliases.sh /home/laradock/aliases.sh
+COPY ./aliases.sh /home/dockcore/aliases.sh
 
 RUN if [ ${SHELL_OH_MY_ZSH} = true ]; then \
     sed -i 's/\r//' /root/aliases.sh && \
-    sed -i 's/\r//' /home/laradock/aliases.sh && \
-    chown laradock:laradock /home/laradock/aliases.sh && \
+    sed -i 's/\r//' /home/dockcore/aliases.sh && \
+    chown dockcore:dockcore /home/dockcore/aliases.sh && \
     echo "" >> ~/.zshrc && \
     echo "# Load Custom Aliases" >> ~/.zshrc && \
     echo "source ~/aliases.sh" >> ~/.zshrc && \
 	  echo "" >> ~/.zshrc \
 ;fi
 
-USER laradock
+USER dockcore
 
 RUN if [ ${SHELL_OH_MY_ZSH} = true ]; then \
     echo "" >> ~/.zshrc && \
@@ -1278,8 +1276,8 @@ RUN if [ ${INSTALL_PHPDECIMAL} = true ]; then \
     else \
       apt-get install -yqq libmpdec-dev \
       && pecl install decimal \
-      && echo "extension=decimal.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/decimal.ini \
-      && ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/decimal.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/30-decimal.ini \
+      && echo "extension=decimal.so" >> /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/decimal.ini \
+      && ln -s /etc/php/${DOCKCORE_PHP_VERSION}/mods-available/decimal.ini /etc/php/${DOCKCORE_PHP_VERSION}/cli/conf.d/30-decimal.ini \
       && php -m | grep -q 'decimal' \
     ;fi \
 ;fi

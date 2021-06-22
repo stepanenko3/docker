@@ -4,12 +4,10 @@
 #--------------------------------------------------------------------------
 #
 
-ARG LARADOCK_PHP_VERSION
-FROM php:${LARADOCK_PHP_VERSION}-alpine
+ARG DOCKCORE_PHP_VERSION
+FROM php:${DOCKCORE_PHP_VERSION}-alpine
 
-LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
-
-ARG LARADOCK_PHP_VERSION
+ARG DOCKCORE_PHP_VERSION
 
 # If you're in China, or you need to change sources, will be set CHANGE_SOURCE to true in .env.
 
@@ -45,8 +43,8 @@ ENV PUID ${PUID}
 ARG PGID=1000
 ENV PGID ${PGID}
 
-RUN addgroup -g ${PGID} laradock && \
-    adduser -D -G laradock -u ${PUID} laradock
+RUN addgroup -g ${PGID} dockcore && \
+    adduser -D -G dockcore -u ${PUID} dockcore
 
 #Install BZ2:
 ARG INSTALL_BZ2=false
@@ -203,7 +201,7 @@ ARG INSTALL_ZIP_ARCHIVE=false
 RUN set -eux; \
   if [ ${INSTALL_ZIP_ARCHIVE} = true ]; then \
     apk --update add libzip-dev && \
-    if [ ${LARADOCK_PHP_VERSION} = "7.3" ] || [ ${LARADOCK_PHP_VERSION} = "7.4" ] || [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
+    if [ ${DOCKCORE_PHP_VERSION} = "7.3" ] || [ ${DOCKCORE_PHP_VERSION} = "7.4" ] || [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
       docker-php-ext-configure zip; \
     else \
       docker-php-ext-configure zip --with-libzip; \

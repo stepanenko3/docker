@@ -4,21 +4,19 @@
 #--------------------------------------------------------------------------
 #
 # To edit the 'php-fpm' base Image, visit its repository on Github
-#    https://github.com/Laradock/php-fpm
+#    https://github.com/Dockcore/php-fpm
 #
 # To change its version, see the available Tags on the Docker Hub:
-#    https://hub.docker.com/r/laradock/php-fpm/tags/
+#    https://hub.docker.com/r/dockcore/php-fpm/tags/
 #
 # Note: Base Image name format {image-tag}-{php-version}
 #
 
-ARG LARADOCK_PHP_VERSION
+ARG DOCKCORE_PHP_VERSION
 ARG BASE_IMAGE_TAG_PREFIX=latest
-FROM laradock/php-fpm:${BASE_IMAGE_TAG_PREFIX}-${LARADOCK_PHP_VERSION}
+FROM dockcore/php-fpm:${BASE_IMAGE_TAG_PREFIX}-${DOCKCORE_PHP_VERSION}
 
-LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
-
-ARG LARADOCK_PHP_VERSION
+ARG DOCKCORE_PHP_VERSION
 
 # Set Environment Variables
 ENV DEBIAN_FRONTEND noninteractive
@@ -47,13 +45,13 @@ RUN set -xe; \
       #--------------------------------------------------------------------------
       #
       # Mandatory Software's such as ("mcrypt", "pdo_mysql", "libssl-dev", ....)
-      # are installed on the base image 'laradock/php-fpm' image. If you want
+      # are installed on the base image 'dockcore/php-fpm' image. If you want
       # to add more Software's or remove existing one, you need to edit the
-      # base image (https://github.com/Laradock/php-fpm).
+      # base image (https://github.com/Dockcore/php-fpm).
       #
-      # next lines are here becase there is no auto build on dockerhub see https://github.com/laradock/laradock/pull/1903#issuecomment-463142846
+      # next lines are here becase there is no auto build on dockerhub see https://github.com/dockcore/dockcore/pull/1903#issuecomment-463142846
       libzip-dev zip unzip && \
-      if [ ${LARADOCK_PHP_VERSION} = "7.3" ] || [ ${LARADOCK_PHP_VERSION} = "7.4" ] || [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
+      if [ ${DOCKCORE_PHP_VERSION} = "7.3" ] || [ ${DOCKCORE_PHP_VERSION} = "7.4" ] || [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
         docker-php-ext-configure zip; \
       else \
         docker-php-ext-configure zip --with-libzip; \
@@ -279,7 +277,7 @@ ARG INSTALL_PHPDBG=false
 
 RUN if [ ${INSTALL_PHPDBG} = true ]; then \
     # Load the xdebug extension only with phpunit commands
-    apt-get install -yqq --force-yes php${LARADOCK_PHP_VERSION}-phpdbg \
+    apt-get install -yqq --force-yes php${DOCKCORE_PHP_VERSION}-phpdbg \
 ;fi
 
 ###########################################################################
@@ -390,16 +388,6 @@ RUN set -eux; \
 # RUN if [ ${INSTALL_XHPROF} = false ]; then \
 #     rm /usr/local/etc/php/conf.d/xhprof.ini \
 # ;fi
-
-###########################################################################
-# pcntl
-###########################################################################
-
-ARG INSTALL_PCNTL=false
-RUN if [ ${INSTALL_PCNTL} = true ]; then \
-    # Installs pcntl, helpful for running Horizon
-    docker-php-ext-install pcntl \
-;fi
 
 ###########################################################################
 # bcmath:
@@ -535,7 +523,7 @@ RUN if [ ${INSTALL_IONCUBE} = true ]; then \
       # Install the php ioncube loader
       curl -L -o /tmp/ioncube_loaders_lin_x86-64.tar.gz https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
       && tar zxpf /tmp/ioncube_loaders_lin_x86-64.tar.gz -C /tmp \
-      && mv /tmp/ioncube/ioncube_loader_lin_${LARADOCK_PHP_VERSION}.so $(php -r "echo ini_get('extension_dir');")/ioncube_loader.so \
+      && mv /tmp/ioncube/ioncube_loader_lin_${DOCKCORE_PHP_VERSION}.so $(php -r "echo ini_get('extension_dir');")/ioncube_loader.so \
       && printf "zend_extension=ioncube_loader.so\n" > $PHP_INI_DIR/conf.d/0ioncube.ini \
       && rm -rf /tmp/ioncube* \
     ;fi \
@@ -730,8 +718,8 @@ RUN if [ ${INSTALL_CALENDAR} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_PHALCON=false
-ARG LARADOCK_PHALCON_VERSION
-ENV LARADOCK_PHALCON_VERSION ${LARADOCK_PHALCON_VERSION}
+ARG DOCKCORE_PHALCON_VERSION
+ENV DOCKCORE_PHALCON_VERSION ${DOCKCORE_PHALCON_VERSION}
 
 # Copy phalcon configration
 COPY ./phalcon.ini /usr/local/etc/php/conf.d/phalcon.ini.disable
@@ -745,9 +733,9 @@ RUN if [ $INSTALL_PHALCON = true ]; then \
     && make \
     && make test \
     && make install \
-    && curl -L -o /tmp/cphalcon.zip https://github.com/phalcon/cphalcon/archive/v${LARADOCK_PHALCON_VERSION}.zip \
+    && curl -L -o /tmp/cphalcon.zip https://github.com/phalcon/cphalcon/archive/v${DOCKCORE_PHALCON_VERSION}.zip \
     && unzip -d /tmp/ /tmp/cphalcon.zip \
-    && cd /tmp/cphalcon-${LARADOCK_PHALCON_VERSION}/build \
+    && cd /tmp/cphalcon-${DOCKCORE_PHALCON_VERSION}/build \
     && ./install \
     && mv /usr/local/etc/php/conf.d/phalcon.ini.disable /usr/local/etc/php/conf.d/phalcon.ini \
     && rm -rf /tmp/cphalcon* \
@@ -1040,7 +1028,7 @@ RUN if [ ${DOWNGRADE_OPENSSL_TLS_AND_SECLEVEL} = true ]; then \
 # Check PHP version:
 ###########################################################################
 
-RUN set -xe; php -v | head -n 1 | grep -q "PHP ${LARADOCK_PHP_VERSION}."
+RUN set -xe; php -v | head -n 1 | grep -q "PHP ${DOCKCORE_PHP_VERSION}."
 
 #
 #--------------------------------------------------------------------------

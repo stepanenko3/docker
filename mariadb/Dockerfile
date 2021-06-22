@@ -1,8 +1,6 @@
 ARG MARIADB_VERSION=latest
 FROM mariadb:${MARIADB_VERSION}
 
-LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
-
 #####################################
 # Set Timezone
 #####################################
