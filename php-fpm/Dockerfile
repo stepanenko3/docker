@@ -195,7 +195,9 @@ RUN if [ ${INSTALL_PGSQL} = true ]; then \
 # pgsql client
 ###########################################################################
 
+
 ARG INSTALL_PG_CLIENT=false
+ARG INSTALL_POSTGIS=false
 
 RUN if [ ${INSTALL_PG_CLIENT} = true ]; then \
     apt-get install -yqq gnupg \
@@ -203,7 +205,10 @@ RUN if [ ${INSTALL_PG_CLIENT} = true ]; then \
     && echo "deb http://apt.postgresql.org/pub/repos/apt $VERSION_CODENAME-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
     && curl -sL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
     && apt-get update -yqq \
-    && apt-get install -yqq postgresql-client-12; \
+    && apt-get install -yqq postgresql-client-12 postgis; \
+    if [ ${INSTALL_POSTGIS} = true ]; then \
+      apt-get install -yqq postgis; \
+    fi \
     && apt-get purge -yqq gnupg \
 ;fi
 
@@ -385,29 +390,6 @@ RUN set -eux; \
 # RUN if [ ${INSTALL_XHPROF} = false ]; then \
 #     rm /usr/local/etc/php/conf.d/xhprof.ini \
 # ;fi
-
-###########################################################################
-# GEARMAN:
-###########################################################################
-
-ARG INSTALL_GEARMAN=false
-
-RUN if [ ${INSTALL_GEARMAN} = true ]; then \
-    apt-get -y install libgearman-dev && \
-    cd /tmp && \
-    curl -L https://github.com/wcgallego/pecl-gearman/archive/gearman-2.0.5.zip -O && \
-    unzip gearman-2.0.5.zip && \
-    mv pecl-gearman-gearman-2.0.5 pecl-gearman && \
-    cd /tmp/pecl-gearman && \
-    phpize && \
-    ./configure && \
-    make -j$(nproc) && \
-    make install && \
-    cd / && \
-    rm /tmp/gearman-2.0.5.zip && \
-    rm -r /tmp/pecl-gearman && \
-    docker-php-ext-enable gearman \
-;fi
 
 ###########################################################################
 # pcntl

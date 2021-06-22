@@ -134,6 +134,9 @@ USER root
 # Add the composer.json
 COPY ./composer.json /home/laradock/.composer/composer.json
 
+# Add the auth.json for magento 2 credentials
+COPY ./auth.json /home/laradock/.composer/auth.json
+
 # Make sure that ~/.composer belongs to laradock
 RUN chown -R laradock:laradock /home/laradock/.composer
 
@@ -388,6 +391,7 @@ RUN if [ ${INSTALL_PHPDBG} = true ]; then \
     apt-get install -y --force-yes php${LARADOCK_PHP_VERSION}-phpdbg \
 ;fi
 
+
 ###########################################################################
 # ssh:
 ###########################################################################
@@ -426,19 +430,6 @@ RUN if [ ${INSTALL_MONGO} = true ]; then \
       echo "extension=mongodb.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/mongodb.ini && \
       ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/mongodb.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/30-mongodb.ini \
     ;fi \
-;fi
-
-
-###########################################################################
-# Gearman:
-###########################################################################
-
-ARG INSTALL_GEARMAN=false
-
-RUN if [ ${INSTALL_GEARMAN} = true ]; then \
-    add-apt-repository -y ppa:ondrej/pkg-gearman && \
-    apt-get update && \
-    apt-get -yqq install php-gearman \
 ;fi
 
 ###########################################################################
@@ -819,6 +810,23 @@ RUN set -eux; \
       php -m | grep -q 'pdo_sqlsrv' \
     ;fi \
   ;fi
+
+###########################################################################
+# Image optimizers:
+###########################################################################
+
+USER root
+
+ARG INSTALL_IMAGE_OPTIMIZERS=false
+
+RUN if [ ${INSTALL_IMAGE_OPTIMIZERS} = true ]; then \
+    apt-get install -y jpegoptim optipng pngquant gifsicle && \
+    if [ ${INSTALL_NODE} = true ]; then \
+        exec bash && . ~/.bashrc && npm install -g svgo \
+    ;fi\
+;fi
+
+USER laradock
 
 ###########################################################################
 # Symfony:

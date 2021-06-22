@@ -3,8 +3,6 @@ version: '3.5'
 networks:
   backend:
     driver: ${NETWORKS_DRIVER}
-  frontend:
-    driver: ${NETWORKS_DRIVER}
 
 volumes:
   mysql:
@@ -55,7 +53,6 @@ services:
           - INSTALL_SMB=${WORKSPACE_INSTALL_SMB}
           - INSTALL_IMAP=${WORKSPACE_INSTALL_IMAP}
           - INSTALL_MONGO=${WORKSPACE_INSTALL_MONGO}
-          - INSTALL_GEARMAN=${WORKSPACE_INSTALL_GEARMAN}
           - INSTALL_PHPREDIS=${WORKSPACE_INSTALL_PHPREDIS}
           - INSTALL_MSSQL=${WORKSPACE_INSTALL_MSSQL}
           - INSTALL_WP_CLI=${WORKSPACE_INSTALL_WP_CLI}
@@ -102,8 +99,6 @@ services:
           - AST_VERSION=${WORKSPACE_AST_VERSION}
           - IMAGEMAGICK_VERSION=${WORKSPACE_IMAGEMAGICK_VERSION}
           - TZ=${WORKSPACE_TIMEZONE}
-          - INSTALL_POWERLINE=${WORKSPACE_INSTALL_POWERLINE}
-          - INSTALL_SUPERVISOR=${WORKSPACE_INSTALL_SUPERVISOR}
           - INSTALL_FFMPEG=${WORKSPACE_INSTALL_FFMPEG}
           - INSTALL_AUDIOWAVEFORM=${WORKSPACE_INSTALL_AUDIOWAVEFORM}
           - INSTALL_WKHTMLTOPDF=${WORKSPACE_INSTALL_WKHTMLTOPDF}
@@ -135,7 +130,6 @@ services:
         - DOCKER_TLS_CERTDIR=/certs
         - DOCKER_CERT_PATH=/certs/client
       networks:
-        - frontend
         - backend
 
 ### PHP-FPM ##############################################
@@ -160,7 +154,6 @@ services:
           - INSTALL_SMB=${PHP_FPM_INSTALL_SMB}
           - INSTALL_IMAP=${PHP_FPM_INSTALL_IMAP}
           - INSTALL_MONGO=${PHP_FPM_INSTALL_MONGO}
-          - INSTALL_GEARMAN=${PHP_FPM_INSTALL_GEARMAN}
           - INSTALL_MSSQL=${PHP_FPM_INSTALL_MSSQL}
           - INSTALL_BCMATH=${PHP_FPM_INSTALL_BCMATH}
           - INSTALL_PHPREDIS=${PHP_FPM_INSTALL_PHPREDIS}
@@ -255,7 +248,6 @@ services:
           - INSTALL_SOAP=${PHP_WORKER_INSTALL_SOAP}
           - INSTALL_ZIP_ARCHIVE=${PHP_WORKER_INSTALL_ZIP_ARCHIVE}
           - INSTALL_MYSQL_CLIENT=${PHP_WORKER_INSTALL_MYSQL_CLIENT}
-          - INSTALL_GEARMAN=${PHP_WORKER_INSTALL_GEARMAN}
           - INSTALL_GHOSTSCRIPT=${PHP_WORKER_INSTALL_GHOSTSCRIPT}
           - INSTALL_SWOOLE=${PHP_WORKER_INSTALL_SWOOLE}
           - INSTALL_TAINT=${PHP_WORKER_INSTALL_TAINT}
@@ -335,7 +327,6 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - frontend
         - backend
 
 ### Apache Server ########################################
@@ -359,7 +350,6 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - frontend
         - backend
 
 ### MySQL ################################################
@@ -488,7 +478,6 @@ services:
       depends_on:
         - "${PMA_DB_ENGINE}"
       networks:
-        - frontend
         - backend
 
 ### pgAdmin ##############################################
@@ -504,7 +493,6 @@ services:
       depends_on:
         - postgres
       networks:
-        - frontend
         - backend
 
 ### ElasticSearch ########################################
@@ -534,7 +522,6 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - frontend
         - backend
 
 ### Mailhog ################################################
@@ -544,5 +531,4 @@ services:
         - "1025:1025"
         - "8025:8025"
       networks:
-        - frontend
         - backend

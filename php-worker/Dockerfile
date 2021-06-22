@@ -250,17 +250,6 @@ RUN if [ ${INSTALL_AUDIOWAVEFORM} = true ]; then \
    && make install \
 ;fi
 
-# Install Gearman:
-ARG INSTALL_GEARMAN=false
-
-RUN if [ ${INSTALL_GEARMAN} = true ]; then \
-    sed -i "\$ahttp://dl-cdn.alpinelinux.org/alpine/edge/main" /etc/apk/repositories && \
-    sed -i "\$ahttp://dl-cdn.alpinelinux.org/alpine/edge/community" /etc/apk/repositories && \
-    sed -i "\$ahttp://dl-cdn.alpinelinux.org/alpine/edge/testing" /etc/apk/repositories && \
-    apk --update add php7-gearman && \
-    sh -c 'echo "extension=/usr/lib/php7/modules/gearman.so" > /usr/local/etc/php/conf.d/gearman.ini' \
-;fi
-
 # Install Phalcon ext
 ARG INSTALL_PHALCON=false
 ARG PHALCON_VERSION
