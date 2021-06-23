@@ -1,7 +1,7 @@
 version: '3.5'
 
 networks:
-  backend:
+  app-network:
     driver: ${NETWORKS_DRIVER}
 
 volumes:
@@ -66,6 +66,7 @@ services:
           - INSTALL_WORKSPACE_SSH=${WORKSPACE_INSTALL_WORKSPACE_SSH}
           - INSTALL_LARAVEL_ENVOY=${WORKSPACE_INSTALL_LARAVEL_ENVOY}
           - INSTALL_LARAVEL_INSTALLER=${WORKSPACE_INSTALL_LARAVEL_INSTALLER}
+          - INSTALL_LARAVEL_STORAGE_LINK=${WORKSPACE_INSTALL_LARAVEL_STORAGE_LINK}
           - INSTALL_DEPLOYER=${WORKSPACE_INSTALL_DEPLOYER}
           - INSTALL_PRESTISSIMO=${WORKSPACE_INSTALL_PRESTISSIMO}
           - INSTALL_LINUXBREW=${WORKSPACE_INSTALL_LINUXBREW}
@@ -125,7 +126,7 @@ services:
         - DOCKER_TLS_CERTDIR=/certs
         - DOCKER_CERT_PATH=/certs/client
       networks:
-        - backend
+        - app-network
 
 ### PHP-FPM ##############################################
     php-fpm:
@@ -217,7 +218,7 @@ services:
       depends_on:
         - workspace
       networks:
-        - backend
+        - app-network
 
 ### PHP Worker ############################################
     php-worker:
@@ -261,7 +262,7 @@ services:
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       networks:
-        - backend
+        - app-network
 
 ### NGINX Server #########################################
     nginx:
@@ -285,7 +286,7 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - backend
+        - app-network
 
 ### Apache Server ########################################
     apache2:
@@ -308,7 +309,7 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - backend
+        - app-network
 
 ### MySQL ################################################
     mysql:
@@ -328,7 +329,7 @@ services:
       ports:
         - "${MYSQL_PORT}:3306"
       networks:
-        - backend
+        - app-network
 
 ### MSSQL ################################################
     mssql:
@@ -344,7 +345,7 @@ services:
       ports:
         - "${MSSQL_PORT}:1433"
       networks:
-        - backend
+        - app-network
 
 ### MariaDB ##############################################
     mariadb:
@@ -367,7 +368,7 @@ services:
         - MYSQL_PASSWORD=${MARIADB_PASSWORD}
         - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
       networks:
-        - backend
+        - app-network
 
 ### PostgreSQL ###########################################
     postgres:
@@ -385,7 +386,7 @@ services:
         - POSTGRES_USER=${POSTGRES_USER}
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       networks:
-        - backend
+        - app-network
 
 ### MongoDB ##############################################
     mongo:
@@ -396,7 +397,7 @@ services:
         - ${DATA_PATH_HOST}/mongo:/data/db
         - ${DATA_PATH_HOST}/mongo_config:/data/configdb
       networks:
-        - backend
+        - app-network
 
   ### Redis ################################################
     redis:
@@ -406,7 +407,7 @@ services:
       ports:
         - "${REDIS_PORT}:6379"
       networks:
-        - backend
+        - app-network
 
 ### Memcached ############################################
     memcached:
@@ -418,7 +419,7 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - backend
+        - app-network
 
 ### phpMyAdmin ###########################################
     phpmyadmin:
@@ -436,7 +437,7 @@ services:
       depends_on:
         - "${PMA_DB_ENGINE}"
       networks:
-        - backend
+        - app-network
 
 ### pgAdmin ##############################################
     pgadmin:
@@ -451,7 +452,7 @@ services:
       depends_on:
         - postgres
       networks:
-        - backend
+        - app-network
 
 ### ElasticSearch ########################################
     elasticsearch:
@@ -480,7 +481,7 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - backend
+        - app-network
 
 ### Mailhog ################################################
     mailhog:
@@ -489,4 +490,4 @@ services:
         - "1025:1025"
         - "8025:8025"
       networks:
-        - backend
+        - app-network
