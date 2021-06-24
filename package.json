@@ -1,0 +1,16 @@
+{
+    "name": "dockcore",
+    "version": "0.1",
+    "description": "Dockcore - Simple containers runner",
+    "scripts": {
+        "sync.docker_up": "./sync.sh up mysql redis workspace apache2",
+        "sync.docker_down": "./sync.sh down",
+        "docker_up": "sudo docker-compose up -d mysql redis workspace apache2",
+        "docker_down": "sudo docker-compose down"
+    },
+    "author": {
+        "name": "Artem Stepanenko",
+        "email": "info@stpnnk.top"
+    },
+    "license": "ISC"
+}
