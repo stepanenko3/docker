@@ -1,0 +1,21 @@
+          ok  Starting native_osx for sync applications-docker-sync
+          ok  applications-docker-sync container still running, restarting unison in container
+unison: stopped
+unison: started
+     success  Sync container started
+     success  Showing unison logs from your sync container: applications-docker-sync
+[2021-06-24 13:27:21 +0300] Sync Log:  tail: can't open '/tmp/unison.log': No such file or directory
+          ok  Starting native_osx for sync applications-docker-sync
+          ok  applications-docker-sync container still running, restarting unison in container
+unison: stopped
+unison: started
+     success  Sync container started
+     success  Showing unison logs from your sync container: applications-docker-sync
+[2021-06-24 13:50:55 +0300] Sync Log:  tail: can't open '/tmp/unison.log': No such file or directory
+[2021-06-24 13:50:55 +0300] Sync Log:  Error response from daemon: dial unix docker.raw.sock: connect: connection refused
+          ok  Starting native_osx for sync applications-docker-sync
+          ok  applications-docker-sync container still running, restarting unison in container
+unison: stopped
+unison: started
+     success  Sync container started
+     success  Showing unison logs from your sync container: applications-docker-sync
