@@ -15,7 +15,13 @@ services:
     php-fpm:
         volumes:
             - applications-docker-sync:/var/www:nocopy
-    nginx:
+    apache2:
+        volumes:
+            - applications-docker-sync:/var/www:nocopy
+    mysql:
+        volumes:
+            - applications-docker-sync:/var/www:nocopy
+    redis:
         volumes:
             - applications-docker-sync:/var/www:nocopy
 
